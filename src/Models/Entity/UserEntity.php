@@ -47,8 +47,17 @@ class UserEntity extends Models
         'created_at',
         'updated_at',
         'birthday',
-        'zodiac',
-        'constellation'
+        
+        'country_id',
+        'country',
+        'province_id',
+        'province',
+        'city_id',
+        'city',
+        'county_id',
+        'county',
+        'town_id',
+        'town'
     ];
     /**
      * hidden.  2019/6/8 21:02.

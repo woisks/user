@@ -12,24 +12,20 @@ declare(strict_types=1);
  * +----------------------------------------------------------------------+
  */
 
-use Woisks\User\Models\Entity\UserAttributeEntity;
-
 Route::prefix('user')
-     ->namespace('Woisks\User\Http\Controllers')
-     ->group(function () {
+    ->namespace('Woisks\User\Http\Controllers')
+    ->group(function () {
 
-         Route::get('/demo', function () {
+        Route::any('/check/{name}', 'ChangeController@check');
+        Route::middleware('token')->group(function () {
 
-             return UserAttributeEntity::all();
-         });
-         Route::middleware('token')->group(function () {
+            Route::post('/', 'CreateController@create');
 
-             Route::post('/', 'CreateUserController@create');
-             
-             Route::post('/create/{type}', 'UserInfoController@create');
-             Route::post('/change/{type}', 'UserInfoController@change');
+            Route::post('/address', 'ChangeController@address');
+            Route::post('/sign', 'ChangeController@sign');
+            Route::post('/name/{name}', 'ChangeController@name');
 
-         });
+        });
 
 
-     });
+    });

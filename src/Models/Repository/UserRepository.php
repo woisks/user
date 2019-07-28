@@ -27,17 +27,19 @@ use Woisks\User\Models\Entity\UserEntity;
  */
 class UserRepository
 {
+
     /**
-     * model.  2019/6/8 13:30.
+     * model.  2019/7/28 16:47.
      *
-     * @var static \Woisks\User\Models\Entity\UserEntity
+     * @var static UserEntity
      */
     private static $model;
 
+
     /**
-     * UserRepository constructor. 2019/6/8 13:30.
+     * UserRepository constructor. 2019/7/28 16:47.
      *
-     * @param \Woisks\User\Models\Entity\UserEntity $user
+     * @param UserEntity $user
      *
      * @return void
      */
@@ -46,41 +48,86 @@ class UserRepository
         self::$model = $user;
     }
 
+
     /**
-     * uidExists. 2019/6/8 21:27.
+     * exists. 2019/7/28 16:47.
      *
-     * @param int $account_uid
+     * @param $account_uid
      *
-     * @return bool
+     * @return mixed
      */
-    public function uidExists(int $account_uid): bool
+    public function exists($account_uid)
     {
         return self::$model->where('account_uid', $account_uid)->exists();
     }
 
     /**
-     * created. 2019/6/8 21:44.
+     * check. 2019/7/28 19:33.
      *
-     * @param int    $account_uid
-     * @param int    $background
-     * @param int    $avatar
-     * @param string $name
-     * @param string $gender
-     * @param string $sign
+     * @param $name
      *
      * @return mixed
      */
-    public function created(int $account_uid, int $background, int $avatar, string $name, string $gender, string $sign)
+    public function check($name)
+    {
+        return self::$model->where('name', $name)->exists();
+    }
+
+    /**
+     * first. 2019/7/28 16:47.
+     *
+     * @param $account_uid
+     *
+     * @return mixed
+     */
+    public function first($account_uid)
+    {
+        return self::$model->where('account_uid', $account_uid)->first();
+    }
+
+
+    /**
+     * created. 2019/7/28 18:03.
+     *
+     * @param $account_uid
+     * @param $name
+     * @param $gender
+     * @param $birthday
+     * @param $sign
+     * @param $country_id
+     * @param $country
+     * @param $province_id
+     * @param $province
+     * @param $city_id
+     * @param $city
+     * @param $county_id
+     * @param $county
+     * @param $town_id
+     * @param $town
+     *
+     * @return mixed
+     */
+    public function created($account_uid, $name, $gender, $birthday, $sign, $country_id, $country,
+                            $province_id, $province, $city_id, $city, $county_id, $county, $town_id, $town)
     {
         return self::$model->create([
-            'id'                  => create_numeric_id(),
-            'account_uid'         => $account_uid,
-            'background_photo_id' => $background,
-            'avatar_photo_id'     => $avatar,
-            'name'                => $name,
-            'name_last_time'      => Carbon::now()->timestamp,
-            'gender'              => $gender,
-            'sign'                => $sign
+            'id'             => create_numeric_id(),
+            'account_uid'    => $account_uid,
+            'name'           => $name,
+            'name_last_time' => Carbon::now()->addMonth(3)->timestamp,
+            'sign'           => $sign,
+            'gender'         => $gender,
+            'birthday'       => $birthday,
+            'country_id'     => $country_id,
+            'country'        => $country,
+            'province_id'    => $province_id,
+            'province'       => $province,
+            'city_id'        => $city_id,
+            'city'           => $city,
+            'county_id'      => $county_id,
+            'county'         => $county,
+            'town_id'        => $town_id,
+            'town'           => $town
         ]);
     }
 

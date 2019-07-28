@@ -12,23 +12,31 @@ declare(strict_types=1);
  * +----------------------------------------------------------------------+
  */
 
-namespace Woisks\User\Http\Controllers;
+namespace Woisks\User\Http\Requests;
 
 
-use Illuminate\Http\Request;
-use Validator;
-
-class BirthdayController extends BaseController
+/**
+ * Class SignRequest.
+ *
+ * @package Woisks\User\Http\Requests
+ *
+ * @Author  Maple Grove  <bolelin@126.com> 2019/6/8 20:33
+ */
+class SignRequest extends Requests
 {
-    public function created(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'birthday' => 'required|date|after:' . config('woisk.user.after_birthday') . '|before:' . config('woisk.user.before_birthday'),
-        ]);
-        if ($validator->fails()) {
-            return res(422, $validator->errors()->first());
-        }
 
-        return $request->all();
+    /**
+     * rules. 2019/6/8 20:33.
+     *
+     *
+     * @return array|mixed
+     */
+    public function rules()
+    {
+        return [
+
+            'sign' => 'required|string|max:45',
+
+        ];
     }
 }

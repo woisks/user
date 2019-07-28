@@ -16,13 +16,13 @@ namespace Woisks\User\Http\Requests;
 
 
 /**
- * Class CreateUserRequests.
+ * Class AddressRequest.
  *
  * @package Woisks\User\Http\Requests
  *
  * @Author  Maple Grove  <bolelin@126.com> 2019/6/8 20:33
  */
-class CreateUserRequests extends Requests
+class AddressRequest extends Requests
 {
 
     /**
@@ -34,11 +34,22 @@ class CreateUserRequests extends Requests
     public function rules()
     {
         return [
-            'background' => 'sometimes|required|numeric|digits_between:18,19',
-            'avatar'     => 'sometimes|required|numeric|digits_between:18,19',
-            'name'       => 'required|string|min:2|max:16',
-            'gender'     => 'required|string',
-            'sign'       => 'sometimes|string|max:16',
+
+            'country_id' => 'required|numeric',
+            'country'    => 'required|string|max:45',
+
+            'province_id' => 'sometimes|numeric',
+            'province'    => 'sometimes|string|max:45',
+
+            'city_id' => 'sometimes|numeric',
+            'city'    => 'sometimes|string|max:45',
+
+            'county_id' => 'sometimes|numeric',
+            'county'    => 'sometimes|string|max:45',
+
+            'town_id' => 'sometimes|numeric',
+            'town'    => 'sometimes|string|max:45',
+
         ];
     }
 }
