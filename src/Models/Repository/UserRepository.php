@@ -90,7 +90,9 @@ class UserRepository
      * created. 2019/7/28 18:03.
      *
      * @param $account_uid
+     * @param $background
      * @param $name
+     * @param $avatar
      * @param $gender
      * @param $birthday
      * @param $sign
@@ -107,27 +109,29 @@ class UserRepository
      *
      * @return mixed
      */
-    public function created($account_uid, $name, $gender, $birthday, $sign, $country_id, $country,
+    public function created($account_uid, $background, $avatar, $name, $gender, $birthday, $sign, $country_id, $country,
                             $province_id, $province, $city_id, $city, $county_id, $county, $town_id, $town)
     {
         return self::$model->create([
-            'id'             => create_numeric_id(),
-            'account_uid'    => $account_uid,
-            'name'           => $name,
-            'name_last_time' => Carbon::now()->addMonth(3)->timestamp,
-            'sign'           => $sign,
-            'gender'         => $gender,
-            'birthday'       => $birthday,
-            'country_id'     => $country_id,
-            'country'        => $country,
-            'province_id'    => $province_id,
-            'province'       => $province,
-            'city_id'        => $city_id,
-            'city'           => $city,
-            'county_id'      => $county_id,
-            'county'         => $county,
-            'town_id'        => $town_id,
-            'town'           => $town
+            'id'                  => create_numeric_id(),
+            'account_uid'         => $account_uid,
+            'background_photo_id' => $background,
+            'avatar_photo_id'     => $avatar,
+            'name'                => $name,
+            'name_last_time'      => Carbon::now()->addMonth(3)->timestamp,
+            'sign'                => $sign,
+            'gender'              => $gender,
+            'birthday'            => $birthday,
+            'country_id'          => $country_id,
+            'country'             => $country,
+            'province_id'         => $province_id,
+            'province'            => $province,
+            'city_id'             => $city_id,
+            'city'                => $city,
+            'county_id'           => $county_id,
+            'county'              => $county,
+            'town_id'             => $town_id,
+            'town'                => $town
         ]);
     }
 

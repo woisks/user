@@ -13,19 +13,21 @@ declare(strict_types=1);
  */
 
 Route::prefix('user')
+    ->middleware('throttle:60,1')
     ->namespace('Woisks\User\Http\Controllers')
     ->group(function () {
 
-        Route::any('/check/{name}', 'ChangeController@check');
+        Route::any('/check/{name}', 'CheckController@checkName');
+        Route::get('/{account_uid}', 'GetController@getUser')->where(['account_uid' => '[0-9]+']);
         Route::middleware('token')->group(function () {
 
+            Route::post('/check', 'CheckController@checkUser');
+
             Route::post('/', 'CreateController@create');
-
-            Route::post('/address', 'ChangeController@address');
-            Route::post('/sign', 'ChangeController@sign');
-            Route::post('/name/{name}', 'ChangeController@name');
-
+            Route::post('/address', 'AddressController@address');
+            Route::post('/sign', 'SignController@sign');
+            Route::post('/background/{id}', 'BackgroundController@background');
+            Route::post('/avatar/{id}', 'AvatarController@avatar');
+            Route::post('/name/{name}', 'NameController@name');
         });
-
-
     });

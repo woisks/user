@@ -16,7 +16,10 @@ namespace Woisks\User\Http\Controllers;
 
 
 use Illuminate\Http\JsonResponse;
+use Woisks\AreaBasis\Models\Services\AreaServices;
+use Woisks\Count\Models\Services\CountServices;
 use Woisks\Jwt\Services\JwtService;
+use Woisks\Photo\Models\Services\PhotoServices;
 use Woisks\User\Http\Requests\CreateRequest;
 use Woisks\User\Models\Repository\UserRepository;
 
@@ -48,47 +51,63 @@ class CreateController extends BaseController
         $this->userRepo = $userRepo;
     }
 
+
     /**
-     * create. 2019/7/28 17:08.
+     * create. 2019/8/1 19:43.
      *
      * @param CreateRequest $request
      *
      * @return JsonResponse
+     * @throws \Exception
      */
     public function create(CreateRequest $request)
     {
+        $background = $request->input('background', 0);
+        $avatar     = $request->input('avatar', 0);
+
         $name     = $request->input('name');
         $gender   = $request->input('gender');
         $birthday = $request->input('birthday');
 
         $sign = $request->input('sign', '');
 
-        $country_id = $request->input('country_id', 1);
-        $country    = $request->input('country', '');
-
-        $province_id = $request->input('province_id', 0);
-        $province    = $request->input('province', '');
-
-        $city_id = $request->input('city_id', 0);
-        $city    = $request->input('city', '');
-
-        $county_id = $request->input('county_id', 0);
-        $county    = $request->input('county', '');
-
-        $town_id = $request->input('town_id', 0);
-        $town    = $request->input('town', '');
+        $country  = $request->input('country');
+        $province = $request->input('province', 0);
+        $city     = $request->input('city', 0);
+        $county   = $request->input('county', 0);
+        $town     = $request->input('town', 0);
 
         if ($this->userRepo->exists(JwtService::jwt_account_uid())) {
             return res(422, 'user info exists');
         }
 
+        if ($background) {
+            if (!PhotoServices::exists($background)) return res(404, 'background data not exists ');
+        }
 
-        $db = $this->userRepo->created(JwtService::jwt_account_uid(),
-            $name, $gender, $birthday, $sign, $country_id, $country,
-            $province_id, $province, $city_id, $city, $county_id, $county, $town_id, $town);
+        if ($avatar) {
+            if (!PhotoServices::exists($avatar)) return res(404, 'avatar data not exists ');
+        }
+
+        //效验地址数据
+        $area = AreaServices::cascade($country, $province, $city, $county, $town);
+
+        //创建用户信息
+        $db = $this->userRepo->created(JwtService::jwt_account_uid(), $background, $avatar,
+            $name, $gender, $birthday, $sign, $area['country_id'], $area['country'],
+            $area['province_id'], $area['province'], $area['city_id'], $area['city'],
+            $area['county_id'], $area['county'], $area['town_id'], $area['town']);
+
         if ($db) {
+            //统计地址
+            CountServices::increment('user_address', 'country', $area['country_id']);
+            CountServices::increment('user_address', 'province', $area['province_id']);
+            CountServices::increment('user_address', 'city', $area['city_id']);
+            CountServices::increment('user_address', 'county', $area['county_id']);
+            CountServices::increment('user_address', 'town', $area['town_id']);
             return res(200, 'success', $db);
         }
+        
         return res(500, 'Come back later');
     }
 

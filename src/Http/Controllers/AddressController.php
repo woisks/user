@@ -1,0 +1,100 @@
+<?php
+
+declare(strict_types=1);
+
+/*
+ * +----------------------------------------------------------------------+
+ * |                   At all timesI love the moment                      |
+ * +----------------------------------------------------------------------+
+ * | Copyright (c) 2019 www.Woisk.com All rights reserved.                |
+ * +----------------------------------------------------------------------+
+ * |  Author:  Maple Grove  <bolelin@126.com>   QQ:364956690   286013629  |
+ * +----------------------------------------------------------------------+
+ */
+
+namespace Woisks\User\Http\Controllers;
+
+
+use Illuminate\Http\JsonResponse;
+use Woisks\AreaBasis\Models\Services\AreaServices;
+use Woisks\Count\Models\Services\CountServices;
+use Woisks\Jwt\Services\JwtService;
+use Woisks\User\Http\Requests\AddressRequest;
+use Woisks\User\Models\Repository\UserRepository;
+
+class AddressController extends BaseController
+{
+    /**
+     * userRepo.  2019/7/28 19:56.
+     *
+     * @var  UserRepository
+     */
+    private $userRepo;
+
+    /**
+     * BackgroundController constructor. 2019/7/28 19:56.
+     *
+     * @param UserRepository $userRepo
+     *
+     * @return void
+     */
+    public function __construct(UserRepository $userRepo)
+    {
+        $this->userRepo = $userRepo;
+    }
+
+    /**
+     * address. 2019/8/1 20:10.
+     *
+     * @param AddressRequest $request
+     *
+     * @return JsonResponse
+     * @throws \Exception
+     */
+    public function address(AddressRequest $request)
+    {
+        $country  = $request->input('country');
+        $province = $request->input('province', 0);
+        $city     = $request->input('city', 0);
+        $county   = $request->input('county', 0);
+        $town     = $request->input('town', 0);
+
+        $area = AreaServices::cascade($country, $province, $city, $county, $town);
+
+        $db = $this->userRepo->first(JwtService::jwt_account_uid());
+        if (!$db) {
+            return res(404, 'data not exists ');
+        }
+
+        //比对前后数据是否一致
+        $db_diff   = $db->only(['country_id', 'province_id', 'city_id', 'county_id', 'town_id']);
+        $area_diff = collect($area)->only(['country_id', 'province_id', 'city_id', 'county_id', 'town_id']);
+        $diff      = $area_diff->diffAssoc($db_diff);
+
+        $db->country_id = $area['country_id'];;
+        $db->country = $area['country'];
+
+        $db->province_id = $area['province_id'];;
+        $db->province = $area['province'];
+
+        $db->city_id = $area['city_id'];;
+        $db->city = $area['city'];
+
+        $db->county_id = $area['county_id'];;
+        $db->county = $area['county'];
+
+        $db->town_id = $area['town_id'];;
+        $db->town = $area['town'];
+
+        if ($db->save()) {
+
+            foreach ($diff as $key => $value) {
+                list($type, $v) = explode('_', $key);
+                CountServices::decrement('user_address', $type, $value);
+            }
+            return res(200, 'success');
+        }
+        return res(500, 'Come back later');
+
+    }
+}

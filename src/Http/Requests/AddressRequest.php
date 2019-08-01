@@ -35,20 +35,11 @@ class AddressRequest extends Requests
     {
         return [
 
-            'country_id' => 'required|numeric',
-            'country'    => 'required|string|max:45',
-
-            'province_id' => 'sometimes|numeric',
-            'province'    => 'sometimes|string|max:45',
-
-            'city_id' => 'sometimes|numeric',
-            'city'    => 'sometimes|string|max:45',
-
-            'county_id' => 'sometimes|numeric',
-            'county'    => 'sometimes|string|max:45',
-
-            'town_id' => 'sometimes|numeric',
-            'town'    => 'sometimes|string|max:45',
+            'country'  => 'required|numeric|digits_between:1,3',
+            'province' => 'sometimes|numeric|digits:6',
+            'city'     => 'sometimes|numeric|digits:6',
+            'county'   => 'sometimes|numeric|digits:6',
+            'town'     => 'sometimes|numeric|digits:9'
 
         ];
     }

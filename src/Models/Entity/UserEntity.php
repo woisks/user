@@ -47,7 +47,7 @@ class UserEntity extends Models
         'created_at',
         'updated_at',
         'birthday',
-        
+
         'country_id',
         'country',
         'province_id',
@@ -59,12 +59,5 @@ class UserEntity extends Models
         'town_id',
         'town'
     ];
-    /**
-     * hidden.  2019/6/8 21:02.
-     *
-     * @var  array
-     */
-    protected $hidden = [
-        'id'
-    ];
+
 }
