@@ -66,7 +66,7 @@ class BackgroundController extends BaseController
             if (!$db) {
                 return res(404, 'data not exists ');
             }
-            $db->backround_photo_id = $id;
+            $db->background_photo_id = $id;
             return $db->save() ? res(200, 'success') : res(500, 'Come back later');
         }
 
