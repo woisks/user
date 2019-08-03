@@ -54,7 +54,7 @@ class CheckController extends BaseController
         }
 
         if ($this->userRepo->check($name)) {
-            return res(422, 'name exists');
+            return res(409, 'name exists');
         }
 
         return res(200, 'success');

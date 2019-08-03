@@ -78,7 +78,7 @@ class CreateController extends BaseController
         $town     = $request->input('town', 0);
 
         if ($this->userRepo->exists(JwtService::jwt_account_uid())) {
-            return res(422, 'user info exists');
+            return res(409, 'user info exists');
         }
 
         if ($background) {
@@ -105,9 +105,10 @@ class CreateController extends BaseController
             CountServices::increment('user_address', 'city', $area['city_id']);
             CountServices::increment('user_address', 'county', $area['county_id']);
             CountServices::increment('user_address', 'town', $area['town_id']);
+            
             return res(200, 'success', $db);
         }
-        
+
         return res(500, 'Come back later');
     }
 

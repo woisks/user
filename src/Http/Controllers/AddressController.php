@@ -59,17 +59,20 @@ class AddressController extends BaseController
         $county   = $request->input('county', 0);
         $town     = $request->input('town', 0);
 
+        //效验地址数据是否合法
         $area = AreaServices::cascade($country, $province, $city, $county, $town);
 
+        //用户信息是否存在
         $db = $this->userRepo->first(JwtService::jwt_account_uid());
         if (!$db) {
             return res(404, 'data not exists ');
         }
 
-        //比对前后数据是否一致
+        //比对前后数据改动
         $db_diff   = $db->only(['country_id', 'province_id', 'city_id', 'county_id', 'town_id']);
         $area_diff = collect($area)->only(['country_id', 'province_id', 'city_id', 'county_id', 'town_id']);
-        $diff      = $area_diff->diffAssoc($db_diff);
+        $new       = $area_diff->diffAssoc($db_diff);
+        $old       = collect($db_diff)->diffAssoc($area_diff);
 
         $db->country_id = $area['country_id'];;
         $db->country = $area['country'];
@@ -88,10 +91,23 @@ class AddressController extends BaseController
 
         if ($db->save()) {
 
-            foreach ($diff as $key => $value) {
-                list($type, $v) = explode('_', $key);
-                CountServices::decrement('user_address', $type, $value);
+            if (!$new->isEmpty()) {
+                //新增城市地址统计
+                foreach ($new as $key => $value) {
+                    list($type, $v) = explode('_', $key);
+                    CountServices::increment('user_address', $type, $value);
+                }
             }
+
+
+            if (!$old->isEmpty()) {
+                //递减城市地址统计
+                foreach ($old as $key => $value) {
+                    list($type, $v) = explode('_', $key);
+                    CountServices::decrement('user_address', $type, $value);
+                }
+            }
+            
             return res(200, 'success');
         }
         return res(500, 'Come back later');

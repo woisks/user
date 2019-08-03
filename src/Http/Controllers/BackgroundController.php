@@ -58,12 +58,15 @@ class BackgroundController extends BaseController
      */
     public function background($id)
     {
+        //效验图片合法性
         if (PhotoServices::exists($id)) {
+
+            //验证用户信息是否存在
             $db = $this->userRepo->first(JwtService::jwt_account_uid());
             if (!$db) {
                 return res(404, 'data not exists ');
             }
-            $db->avatar_photo_id = $id;
+            $db->backround_photo_id = $id;
             return $db->save() ? res(200, 'success') : res(500, 'Come back later');
         }
 

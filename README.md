@@ -1,20 +1,13 @@
 ## status code 
 
+200 success (成功)
 
-2003 Account Freeze
+404 not exists (不存在)
 
-2002 Account Disable
+409 exists (已存在)
 
-2001 Too many errors, lock 30 minutes
+422 param error (参数错误)
 
-1001 param error lack token 
+429 too many requests (请求频繁) 
 
-500 Come back later
-
-422 param error or not proper
-
-404 not exists
-
-401 password error
-
-200 success
+500 Come back later (内部错误)

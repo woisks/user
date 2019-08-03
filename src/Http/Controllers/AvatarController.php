@@ -50,7 +50,10 @@ class AvatarController extends BaseController
      */
     public function avatar($id)
     {
+        //效验图片合法性
         if (PhotoServices::exists($id)) {
+
+            //验证用户信息是否存在
             $db = $this->userRepo->first(JwtService::jwt_account_uid());
             if (!$db) {
                 return res(404, 'data not exists ');

@@ -55,7 +55,7 @@ class NameController extends BaseController
         }
 
         if ($this->userRepo->check($name)) {
-            return res(422, 'name exists');
+            return res(409, 'name exists');
         }
 
         $db = $this->userRepo->first(JwtService::jwt_account_uid());
@@ -63,12 +63,13 @@ class NameController extends BaseController
             return res(404, 'data not exists ');
         }
 
+        //效验修改昵称的时间-三个月修改一次
         if (Carbon::now() >= Carbon::parse($db->name_last_time)) {
             $db->name           = $name;
             $db->name_last_time = Carbon::now()->addMonth(3)->timestamp;
             return $db->save() ? res(200, 'success') : res(500, 'Come back later');
         }
 
-        return res(422, 'name update too frequent');
+        return res(429, 'name update too frequent');
     }
 }
