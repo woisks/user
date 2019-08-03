@@ -27,10 +27,10 @@ Route::prefix('user')
             Route::post('/check', 'CheckController@checkUser');
 
             Route::post('/', 'CreateController@create');
-            Route::put('/address', 'AddressController@address');
-            Route::put('/sign', 'SignController@sign');
-            Route::put('/background/{id}', 'BackgroundController@background');
-            Route::put('/avatar/{id}', 'AvatarController@avatar');
-            Route::put('/name/{name}', 'NameController@name');
+            Route::post('/address', 'AddressController@address');
+            Route::post('/sign', 'SignController@sign');
+            Route::post('/background/{id}', 'BackgroundController@background');
+            Route::post('/avatar/{id}', 'AvatarController@avatar');
+            Route::post('/name/{name}', 'NameController@name');
         });
     });
