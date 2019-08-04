@@ -17,7 +17,6 @@ namespace Woisks\User\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Woisks\AreaBasis\Models\Services\AreaServices;
-use Woisks\Count\Models\Services\CountServices;
 use Woisks\Jwt\Services\JwtService;
 use Woisks\User\Http\Requests\AddressRequest;
 use Woisks\User\Models\Repository\UserRepository;
@@ -71,9 +70,16 @@ class AddressController extends BaseController
         //比对前后数据改动
         $db_diff   = $db->only(['country_id', 'province_id', 'city_id', 'county_id', 'town_id']);
         $area_diff = collect($area)->only(['country_id', 'province_id', 'city_id', 'county_id', 'town_id']);
-        $new       = $area_diff->diffAssoc($db_diff);
-        $old       = collect($db_diff)->diffAssoc($area_diff);
 
+        $new = $area_diff->diffAssoc($db_diff)->filter(function ($val) {
+            return $val > 0;
+        });
+
+        $old = collect($db_diff)->diffAssoc($area_diff)->filter(function ($val) {
+            return $val > 0;
+        });
+
+//        dd(['old' => $old, 'new' => $new]);
         $db->country_id = $area['country_id'];;
         $db->country = $area['country'];
 
@@ -91,23 +97,22 @@ class AddressController extends BaseController
 
         if ($db->save()) {
 
-            if (!$new->isEmpty()) {
-                //新增城市地址统计
-                foreach ($new as $key => $value) {
-                    list($type, $v) = explode('_', $key);
-                    CountServices::increment('user_address', $type, $value);
-                }
-            }
-
-
             if (!$old->isEmpty()) {
-                //递减城市地址统计
+                //城市地址递减
                 foreach ($old as $key => $value) {
-                    list($type, $v) = explode('_', $key);
-                    CountServices::decrement('user_address', $type, $value);
+                    list($table, $_) = explode('_', $key);
+                    AreaServices::decrement('user', $table, $value);
                 }
             }
-            
+
+            if (!$new->isEmpty()) {
+                //城市地址新增
+                foreach ($new as $key => $value) {
+                    list($table, $_) = explode('_', $key);
+                    AreaServices::increment('user', $table, $value);
+                }
+            }
+
             return res(200, 'success');
         }
         return res(500, 'Come back later');

@@ -17,14 +17,13 @@ namespace Woisks\User\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Woisks\AreaBasis\Models\Services\AreaServices;
-use Woisks\Count\Models\Services\CountServices;
 use Woisks\Jwt\Services\JwtService;
 use Woisks\Photo\Models\Services\PhotoServices;
 use Woisks\User\Http\Requests\CreateRequest;
 use Woisks\User\Models\Repository\UserRepository;
 
 /**
- * Class CreateController.
+ * Class ChangeController.
  *
  * @package Woisks\User\Http\Controllers
  *
@@ -40,7 +39,7 @@ class CreateController extends BaseController
     private $userRepo;
 
     /**
-     * CreateController constructor. 2019/7/28 17:08.
+     * ChangeController constructor. 2019/7/28 17:08.
      *
      * @param UserRepository $userRepo
      *
@@ -100,12 +99,12 @@ class CreateController extends BaseController
 
         if ($db) {
             //统计地址
-            CountServices::increment('user_address', 'country', $area['country_id']);
-            CountServices::increment('user_address', 'province', $area['province_id']);
-            CountServices::increment('user_address', 'city', $area['city_id']);
-            CountServices::increment('user_address', 'county', $area['county_id']);
-            CountServices::increment('user_address', 'town', $area['town_id']);
-            
+            AreaServices::increment('user', 'country', $area['country_id']);
+            AreaServices::increment('user', 'province', $area['province_id']);
+            AreaServices::increment('user', 'city', $area['city_id']);
+            AreaServices::increment('user', 'county', $area['county_id']);
+            AreaServices::increment('user', 'town', $area['town_id']);
+
             return res(200, 'success', $db);
         }
 

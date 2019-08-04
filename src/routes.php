@@ -18,9 +18,10 @@ Route::prefix('user')
     ->group(function () {
 
         //检查昵称是否可用
-        Route::any('/check/{name}', 'CheckController@checkName');
+        Route::get('/check/{name}', 'CheckController@checkName');
         //根据uid获取用户信息
         Route::get('/{account_uid}', 'GetController@getUser')->where(['account_uid' => '[0-9]+']);
+
         Route::middleware('token')->group(function () {
 
             //检查用户信息是否存在

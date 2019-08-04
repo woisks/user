@@ -16,6 +16,7 @@ namespace Woisks\User\Http\Controllers;
 
 
 use Illuminate\Http\JsonResponse;
+use Woisks\Photo\Models\Services\PhotoServices;
 use Woisks\User\Models\Repository\UserRepository;
 
 class GetController extends BaseController
@@ -49,9 +50,17 @@ class GetController extends BaseController
     public function getUser($account_uid)
     {
         $db = $this->userRepo->first($account_uid);
-        if ($db) {
-            return res(200, 'success', $db);
+        if (!$db) {
+            return res(404, 'user info not exists ');
         }
-        return res(404, 'user info not exists ');
+
+        $db->avatar     = PhotoServices::transUrl($db->avatar_photo_id, 'avatar');
+        $db->background = PhotoServices::transUrl($db->background_photo_id, 'background');
+        unset($db->avatar_photo_id);
+        unset($db->background_photo_id);
+
+        return res(200, 'success', $db);
+
+
     }
 }

@@ -18,7 +18,7 @@ namespace Woisks\User\Http\Requests;
 use Illuminate\Validation\Rule;
 
 /**
- * Class CreateRequest.
+ * Class ChangeRequest.
  *
  * @package Woisks\User\Http\Requests
  *
